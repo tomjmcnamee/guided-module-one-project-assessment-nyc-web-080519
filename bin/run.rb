@@ -1,3 +1,7 @@
-require_relative '../config/environment'
+#!/usr/bin/env ruby
+#ENV["SINATRA_ENV"] ||= "development"
 
-puts "hello world"
+require_relative '../config/environment'
+require_all 'lib'
+
+GolferApp.new.call
