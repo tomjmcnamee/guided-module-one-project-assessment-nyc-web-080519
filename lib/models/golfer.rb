@@ -12,6 +12,7 @@ class Golfer < ActiveRecord::Base
       puts "Looks like you are already registered!"
     else
       golfer.save
+      puts "Success!  You are registered!"
     end  # ends if Golfer.find_by loop
   end  # ends self.create method
 
@@ -40,6 +41,18 @@ class Golfer < ActiveRecord::Base
       Score.add_score_for_user(user, holenum, shots)
     end  # ends until loop
   end  # ends add_scores method
+
+  # The following method lists player names with TEMPORARY number ids (from which the 
+  # app user will make their selection), then builds a hash with
+  # those temp IDs as keys, and corrosponing Golfer Objects as values
+  def self.print_list_of_valid_golfers
+    counter = 0
+    golfer_hash = {}
+    Golfer.all.each { |golfer| counter += 1; golfer_hash[counter] = golfer.name }
+    golfer_hash.each { |tempnumber, golfername| puts "#{tempnumber}:  #{golfername}"}
+    golfer_hash
+  end  # Ends self.print_list_of_valid_golfers 
+
 
 
 end  # end Golfer class

@@ -13,14 +13,6 @@ class GolferApp
     puts "\n" + greetingsarr.sample + "\n"
   end
 
-  # def ordered_list_of_golfers  #must be called on an array of Golfer objects
-  #   counter = 0
-  #   @golfer_hash = {}
-  #   self.each { |golfer| counter += 1; golfer_hash[counter] = golfer.name }
-  #   golfer_hash.each { |tempnumber, golfername| puts "#{tempnumber}:  #{golfername}"}
-  # end  # ends ordered_list_of_golfers method
-  
-
   def call
     random_welcome_greeting
     
@@ -34,7 +26,7 @@ class GolferApp
       puts "2 - See ALL scores"
       puts "3 - See the WINNING player and stroke count"
       puts "4 - See the biggest LOSER and stroke count"
-      puts "5 - See players scorecard"
+      puts "5 - See player's scorecard"
       puts "6 - Create a new Golfer record for yourself"
       puts "7 - Add your scores"
       puts "8 - Modify a score"
@@ -47,57 +39,29 @@ class GolferApp
       
       # Case statement to act on their choice
       case topmenu_response.to_i
-      when 1
-        # The following 4 lines lists player names with TEMPORARY number ids (from which the 
-        # app user will make their selection), then builds a hash with
-        # those temp IDs as keys, and corrosponing Golfer Objects as values
+      when 1  # Top menu response = "1 - See total score for a single player"
+        golfer_hash = Golfer.print_list_of_valid_golfers
+
+        puts "Which player's score would you like to see?  Submit their corrosponding NUMBER"
+        selection_number = gets.chomp    
+        while selection_number.to_i <= 0 || selection_number.to_i > golfer_hash.length do
+          puts "'#{selection_number}' is not a valid selection, try again."
+          selection_number = gets.chomp 
+        end  # Ends "WHILE input is invalid" loop
+        selection_obj = Golfer.find_by(name: golfer_hash[selection_number.to_i])
+        puts "------------#{selection_obj.name}'s total score was #{Golfer.total_score_by_player(selection_obj.id)}----."
         
-        counter = 0
-        golfer_hash = {}
-        Golfer.all.each { |golfer| counter += 1; golfer_hash[counter] = golfer.name }
-        golfer_hash.each { |tempnumber, golfername| puts "#{tempnumber}:  #{golfername}"}
-        
-        # UNTIL statement to retry gathering input until the user makes a valid selection      
-        selection_number = 0
-        until selection_number.to_i > 0 && selection_number.to_i <= golfer_hash.length
-          puts "Which player's score would you like to see?  Submit their corrosponding NUMBER"
-          selection_number = gets.chomp
-          selection_obj = Golfer.find_by(name: golfer_hash[selection_number.to_i])
+      when 2   # Top menu response = "2 - See ALL scores"
+        Golfer.all.each { |golfer| puts "#{golfer.name} shot a #{Golfer.total_score_by_player(golfer.id)}"}
       
-          
-          #IF statement to reject invalid selections
-          if selection_number.to_i > 0 && selection_number.to_i <= golfer_hash.length
-            puts "------------#{selection_obj.name}'s total score was #{Golfer.total_score_by_player(selection_obj.id)}----."
-          else
-            puts "'#{selection_number}' is not a valid selection, try again."
-          end  # ends if statement about valid player number
-        end  # ends until loop about valid player number
-        
-        
-        
-      when 2
-        Golfer.all.each { |golfer| puts "#{golfer.id}:  #{golfer.name} shot a #{Golfer.total_score_by_player(golfer.id)}"}
-      
-        
-      
-      when 3
+      when 3  # Top menu response = "3 - See the WINNING player and stroke count"
         Golfer.player_with_best_score
         
-        
-        
-      when 4
+      when 4  # Top menu response = "4 - See the biggers LOSER and stroke count"
         Golfer.player_with_worst_score
         
-        
-        
-      when 5
-        # The following 4 lines lists player names with TEMPORARY number ids from which the 
-        # app user will make their selection, then builds a hash with
-        # those temp IDs as keys, and corrosponing Golfer Objects as values
-        counter = 0
-        golfer_hash = {}
-        Golfer.all.each { |golfer| counter += 1; golfer_hash[counter] = golfer.name }
-        golfer_hash.each { |tempnumber, golfername| puts "#{tempnumber}:  #{golfername}"}
+      when 5  # Top menu response = "5 - See player's scorecard"
+        golfer_hash = Golfer.print_list_of_valid_golfers
         
         # UNTIL statement to retry gathering input until the user makes a valid selection      
         selection_number = 0
@@ -114,21 +78,18 @@ class GolferApp
           end  # Ends if statement to reject invalid selection
         end  # ends until loop about valid player number
         
-      when 6
+      when 6  # Top menu response = "6 - Create a new Golfer record for yourself"
         puts "Great!  Lets get you added!  ...but first, lets make sure you aren't already registered."
         puts "What is your name? "
         new_user_name = gets.chomp
         puts "What is your age (whole numbers only)?"
         new_user_age = gets.chomp.to_i
         Golfer.create_user(new_user_name, new_user_age)
-        puts "Success!  You are registered!"
+        
         
 
-      when 7
-        counter = 0
-        golfer_hash = {}
-        Golfer.all.each { |golfer| counter += 1; golfer_hash[counter] = golfer.name }
-        golfer_hash.each { |tempnumber, golfername| puts "#{tempnumber}:  #{golfername}"}
+      when 7  # Top menu response = "Add your scores"
+        golfer_hash = Golfer.print_list_of_valid_golfers
         
         # UNTIL statement to retry gathering input until the user makes a valid selection      
         selection_number = 0
@@ -148,11 +109,8 @@ class GolferApp
         end  # ends until loop about valid player number
         
 
-      when 8
-        counter = 0
-        golfer_hash = {}
-        Golfer.all.each { |golfer| counter += 1; golfer_hash[counter] = golfer.name }
-        golfer_hash.each { |tempnumber, golfername| puts "#{tempnumber}:  #{golfername}"}
+      when 8  # Top menu response = "Modify a score"
+        golfer_hash = Golfer.print_list_of_valid_golfers
         
         # UNTIL statement to retry gathering input until the user makes a valid selection      
         selection_number = 0
@@ -201,15 +159,8 @@ class GolferApp
           end  # ends if statement about valid player number
         end  # ends until loop about valid player number
         
-      when 9
-        # The following 4 lines lists player names with TEMPORARY number ids (from which the 
-        # app user will make their selection), then builds a hash with
-        # those temp IDs as keys, and corrosponing Golfer Objects as values
-        
-        counter = 0
-        golfer_hash = {}
-        Golfer.all.each { |golfer| counter += 1; golfer_hash[counter] = golfer.name }
-        golfer_hash.each { |tempnumber, golfername| puts "#{tempnumber}:  #{golfername}"}
+      when 9  # Top menu response = "Delete a Golfer record"
+        golfer_hash = Golfer.print_list_of_valid_golfers
         
         # UNTIL statement to retry gathering input until the user makes a valid selection      
         selection_number = 0
