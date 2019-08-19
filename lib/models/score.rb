@@ -28,6 +28,11 @@ class Score < ActiveRecord::Base
       new_score.save
   end # ends add_score_to_user method
 
-  
+  def self.change_and_save_score(golfers_score_objects,score_hash,score_selection_number,new_stroke_count)
+    changed_score = golfers_score_objects.find(score_hash[score_selection_number.to_i])
+    changed_score.strokes = new_stroke_count
+    changed_score.save
+    puts "Success!"
+  end  # ends 
 
 end  # end Score class

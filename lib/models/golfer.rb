@@ -45,13 +45,21 @@ class Golfer < ActiveRecord::Base
   # The following method lists player names with TEMPORARY number ids (from which the 
   # app user will make their selection), then builds a hash with
   # those temp IDs as keys, and corrosponing Golfer Objects as values
-  def self.print_list_of_valid_golfers
+  def self.print_list_of_valid_golfers(golfer_obj_arr)
     counter = 0
     golfer_hash = {}
-    Golfer.all.each { |golfer| counter += 1; golfer_hash[counter] = golfer.name }
+    golfer_obj_arr.each { |golfer| counter += 1; golfer_hash[counter] = golfer.name }
     golfer_hash.each { |tempnumber, golfername| puts "#{tempnumber}:  #{golfername}"}
     golfer_hash
   end  # Ends self.print_list_of_valid_golfers 
+
+  def self.delete_golfer_and_scores(golfer_obj)
+    deleted_obj = golfer_obj.destroy
+    puts "\n Golfer #{deleted_obj.name} DELETED"
+    Score.where(golfer_id: deleted_obj.id).each { |obj| obj.delete}
+    puts " scores also deleted"
+  end
+
 
 
 
