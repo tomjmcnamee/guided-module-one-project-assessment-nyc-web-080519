@@ -10,13 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_17_132813) do
+ActiveRecord::Schema.define(version: 2019_08_22_134449) do
 
   create_table "courses", force: :cascade do |t|
     t.string "name"
     t.string "address"
     t.string "phone_number"
     t.string "url"
+    t.string "schedule_tee_time"
+  end
+
+  create_table "event_participants", force: :cascade do |t|
+    t.integer "event_id"
+    t.integer "golfer_id"
+  end
+
+  create_table "events", force: :cascade do |t|
+    t.string "name"
+    t.date "date"
+    t.integer "course_id"
   end
 
   create_table "golfers", force: :cascade do |t|
@@ -37,6 +49,7 @@ ActiveRecord::Schema.define(version: 2019_08_17_132813) do
     t.integer "golfer_id"
     t.integer "hole_id"
     t.integer "strokes"
+    t.integer "event_id"
   end
 
 end

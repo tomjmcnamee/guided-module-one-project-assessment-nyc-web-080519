@@ -4,4 +4,6 @@ class Hole < ActiveRecord::Base
   has_many :scores
   has_many :golfers, through: :scores
 
+
+  
 end  # end Hole class
