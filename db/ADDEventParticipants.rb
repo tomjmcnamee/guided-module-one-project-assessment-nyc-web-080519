@@ -1,0 +1,20 @@
+eventrecid = 8
+one_below_first_golferrec = 999
+puts "Start -- Create EventParticipants"
+EventParticipant.creates_new_event_participants_record(eventrecid, one_below_first_golferrec+=1)
+EventParticipant.creates_new_event_participants_record(eventrecid, one_below_first_golferrec+=1)
+EventParticipant.creates_new_event_participants_record(eventrecid, one_below_first_golferrec+=1)
+EventParticipant.creates_new_event_participants_record(eventrecid, one_below_first_golferrec+=1)
+EventParticipant.creates_new_event_participants_record(eventrecid, one_below_first_golferrec+=1)
+EventParticipant.creates_new_event_participants_record(eventrecid, one_below_first_golferrec+=1)
+EventParticipant.creates_new_event_participants_record(eventrecid, one_below_first_golferrec+=1)
+EventParticipant.creates_new_event_participants_record(eventrecid, one_below_first_golferrec+=1)
+EventParticipant.creates_new_event_participants_record(eventrecid, one_below_first_golferrec+=1)
+EventParticipant.creates_new_event_participants_record(eventrecid, one_below_first_golferrec+=1)
+EventParticipant.creates_new_event_participants_record(eventrecid, one_below_first_golferrec+=1)
+EventParticipant.creates_new_event_participants_record(eventrecid, one_below_first_golferrec+=1)
+EventParticipant.creates_new_event_participants_record(eventrecid, one_below_first_golferrec+=1)
+EventParticipant.creates_new_event_participants_record(eventrecid, one_below_first_golferrec+=1)
+EventParticipant.creates_new_event_participants_record(eventrecid, one_below_first_golferrec+=1)
+EventParticipant.creates_new_event_participants_record(eventrecid, one_below_first_golferrec+=1)
+puts "End -- Create EventParticipants"

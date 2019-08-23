@@ -22,6 +22,17 @@ class Event < ActiveRecord::Base
     newevent.name = gets.chomp
     puts "Date of event: (YYYY-MM-DD)"
     newevent.date = gets.chomp
+    frontbackornine = ["Front 9", "Back 9", "All 18"]
+ 
+    counter = 0
+    hash_of_tempids_and_names = {}
+    frontbackornine.each { |string| counter += 1; hash_of_tempids_and_names[counter] = string }
+    puts "\n"
+    puts "Is this event for the Front 9, Back 9, or all 18?"
+    hash_of_tempids_and_names.each { |tempnumber, objname| puts "#{tempnumber}:  #{objname}"}
+    whichholes = gets.chomp
+    whichholes = verifies_valid_selection_else_retry(whichholes,hash_of_tempids_and_names)
+    newevent.front_back_all = frontbackornine[whichholes.to_i - 1]
     newevent.course_id = course_obj.id
     newevent.save
     puts "Event Saved.  Type 'yes' if you'd like to add participants to this event"
@@ -34,7 +45,6 @@ class Event < ActiveRecord::Base
   def self.list_registered_events_for_selection_with_custom_message(custom_message="")
     puts "\n ----Registered Events----"
     event_hash = Event.print_valid_options_and_return_hash_with_tempid_and_obj_combos(Event.all)
-    puts "\n"
     puts custom_message
       event_hash_selection = gets.chomp; puts "\n"
       # puts "\n"    
@@ -42,6 +52,8 @@ class Event < ActiveRecord::Base
     event_obj = Event.find_by(name: event_hash[event_hash_selection.to_i])
     event_obj
   end
+
+
   def self.list_events_user_is_registered_for_with_custom_message(golfer_obj,custom_message="")
     puts "\n ----Registered Events----"
 

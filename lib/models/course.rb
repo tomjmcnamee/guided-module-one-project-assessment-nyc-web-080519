@@ -12,8 +12,10 @@ class Course < ActiveRecord::Base
     new_course.address = gets.chomp
     puts "Phone number?"
     new_course.phone_number = gets.chomp
-    puts "and URL (including the 'www')" 
-    new_course.url =  "http://#{gets.chomp}"
+    puts "and Course Homepage URL (including the 'http(s)://www')" 
+    new_course.url =  "#{gets.chomp}"
+    puts "add URL for booking a tee-time"
+    new_course.schedule_tee_time =  "#{gets.chomp}"
     new_course.save
     new_course
   end  # ends self.create_course method

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_22_134449) do
+ActiveRecord::Schema.define(version: 2019_08_22_203705) do
 
   create_table "courses", force: :cascade do |t|
     t.string "name"
@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(version: 2019_08_22_134449) do
     t.string "name"
     t.date "date"
     t.integer "course_id"
+    t.string "front_back_all"
   end
 
   create_table "golfers", force: :cascade do |t|

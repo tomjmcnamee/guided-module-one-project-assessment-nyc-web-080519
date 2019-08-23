@@ -1,5 +1,7 @@
 require 'pry'
+require 'terminal-table'
 class GolferApp
+  
 
 
   ## The below line hides all DB Call details
@@ -25,7 +27,7 @@ class GolferApp
       # Primary Menu of choices presented to the user      
       puts "\n Select from the below:"
       puts "1 - See total Score for a single player from an Event"
-      puts "2 - See ALL Scores for an Event"
+      puts "2 - See Full Scorecard for an Event"
       puts "3 - See the WINNING player and stroke count from Event"
       puts "4 - See the biggest LOSER and stroke count from Event"
       puts "5 - See player's scorecard from Event"
@@ -44,7 +46,7 @@ class GolferApp
       # Case statement to act on their choice
       case topmenu_response.downcase
         
-      when "1"  # Top menu response = "1 - See total score for a single player"
+      when "1"  # Top menu response = "1 - See total score for a single player from an event"
 
         golfer_hash = Golfer.print_valid_options_and_return_hash_with_tempid_and_obj_combos(Golfer.all)
         puts "Which player's score would you like to see?  Submit their corrosponding NUMBER"
@@ -54,10 +56,7 @@ class GolferApp
   
         # builds the events hash of all events the chosen Golfer has participated in
         events_hash = Event.prints_list_of_events_for_golfer_returning_events_hash(golfer_obj)
-        
-        # arr_golfers_event_objs = [] 
-        # EventParticipant.all.where(golfer_id: golfer_obj).each { |obj| arr_golfers_event_objs << obj.event}
-        # events_hash = Event.print_valid_options_and_return_hash_with_tempid_and_obj_combos(arr_golfers_event_objs)
+      
         puts "Which event do you want scores for?  Submit the corrosponding NUMBER"
           selection_number = gets.chomp    
         selection_number = Event.verifies_valid_selection_else_retry(selection_number,events_hash)
@@ -68,11 +67,10 @@ class GolferApp
 
       when "2"   # Top menu response = "2 - See ALL scores for an Event"
         event_obj = Event.list_registered_events_for_selection_with_custom_message("Which event do you want to see all scores for?")
-        
         event_golfers_arr = Golfer.gather_array_of_all_golfers_participating_in_an_event(event_obj)
+        Score.full_scorecard_for_event_and_player_or_players(event_golfers_arr, event_obj)
+        Golfer.player_with_best_score(event_obj)
 
-        event_golfers_arr.each { |golfer| puts "#{golfer.name} shot a #{golfer.total_score_by_player_per_event(event_obj)}"}
-      
       when "3"  # Top menu response = "3 - See the WINNING player and stroke count for an Event"
         event_obj = Event.list_registered_events_for_selection_with_custom_message("Which event do you want the winning score for?")
         Golfer.player_with_best_score(event_obj)
@@ -91,7 +89,12 @@ class GolferApp
         selection_number = Golfer.verifies_valid_selection_else_retry(selection_number,golfer_hash)
 
         golfer_obj = Golfer.find_by(name: golfer_hash[selection_number.to_i])
-        Score.hole_details_with_player_strokes_for_event(golfer_obj, event_obj)
+
+        #Below is the basic printout of a user's scorecard
+        #Score.hole_details_with_player_strokes_for_event(golfer_obj, event_obj)
+
+        ##This is the start point for building the timecard in a grid
+        Score.full_scorecard_for_event_and_player_or_players(golfer_obj, event_obj)
 
       when "6" # Top menu response = "6 - Create a new Golfer record for yourself"
         Golfer.new_golfer_verify_and_save
@@ -103,9 +106,11 @@ class GolferApp
         selection_number = gets.chomp
         selection_number = Golfer.verifies_valid_selection_else_retry(selection_number,golfer_hash)
         golfer_obj = Golfer.find_by(name: golfer_hash[selection_number.to_i])
+
+
         event_obj = Event.list_events_user_is_registered_for_with_custom_message(golfer_obj,"What event would you like to add scores to?")
         valid_user_event_combo =  EventParticipant.where(event_id: event_obj.id, golfer_id: golfer_obj.id)
-        Golfer.add_scores(golfer_obj, event_obj)
+        golfer_obj.add_scores(event_obj)
         puts "Total score for the round: #{golfer_obj.total_score_by_player_per_event(event_obj)}"
           
 
@@ -189,7 +194,7 @@ class GolferApp
           new_course = Course.create_course
           new_course.add_holes
 
-        when "2"
+        when "2" #  Admin Menu - "Create an Event"
           new_event = Event.create_event
 
         when "3"
@@ -197,24 +202,26 @@ class GolferApp
           event_obj = Event.list_registered_events_for_selection_with_custom_message("Which event do you want to add golfers to?")
           EventParticipant.add_participants_to_event(event_obj)
           
-        when "4"
+        when "4"    # Admin menu - Delete and Event
           event_obj_to_delete = Event.list_registered_events_for_selection_with_custom_message(custom_message="Select the Event you'd like to delete")
           deleted_event_obj = event_obj_to_delete.destroy
           EventParticipant.delete_objects_associated_with_deleted_event_object(deleted_event_obj)
           Score.delete_objects_associated_with_deleted_event_object(deleted_event_obj)
           puts "Deleted event, and associated EventParticipant and Score objects"
 
-        when "5"
-          golfer_hash = Golfer.print_valid_options_and_return_hash_with_tempid_and_obj_combos(Golfer.all)
+        when "5"   #   Admin Menu - Add random scores for golfer event combo
+          event_obj = Event.list_registered_events_for_selection_with_custom_message(custom_message="What event are you adding these random scores to?")
+          arr_of_golfers_from_event = Golfer.gather_array_of_all_golfers_participating_in_an_event(event_obj)
+          golfer_hash = Golfer.print_valid_options_and_return_hash_with_tempid_and_obj_combos(arr_of_golfers_from_event)
+
        
           puts "Submit the NUMBER next to your name"
           selection_number = gets.chomp
           selection_number = Golfer.verifies_valid_selection_else_retry(selection_number,golfer_hash)
           golfer_obj = Golfer.find_by(name: golfer_hash[selection_number.to_i])
-          event_obj = Event.list_events_user_is_registered_for_with_custom_message(golfer_obj,"What event would you like to add scores to?")
+          #event_obj = Event.list_events_user_is_registered_for_with_custom_message(golfer_obj,"What event would you like to add scores to?")
           valid_user_event_combo =  EventParticipant.where(event_id: event_obj.id, golfer_id: golfer_obj.id)
           Golfer.add_random_scores(golfer_obj, event_obj)
-          puts "Total score for the round: #{golfer_obj.total_score_by_player_per_event(event_obj)}"
 
         else  # ELSE FOR ADMIN MENU CASE STATEMENT
 
